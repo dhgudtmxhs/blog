@@ -1,0 +1,41 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import { sitePath, tagPath } from '../lib/paths';
+
+interface Props {
+	post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+	timeZone: 'UTC',
+}).format(post.data.publishedAt);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+	<article class="post">
+		<a class="back-link" href={sitePath()}><span aria-hidden="true">←</span> 모든 글</a>
+
+		<header class="post__header">
+			<time datetime={post.data.publishedAt.toISOString()}>{formattedDate}</time>
+			<h1>{post.data.title}</h1>
+			<p>{post.data.description}</p>
+
+			{post.data.tags.length > 0 && (
+				<ul class="tag-list" aria-label="게시글 태그">
+					{post.data.tags.map((tag) => (
+						<li><a class="tag" href={tagPath(tag)}>#{tag}</a></li>
+					))}
+				</ul>
+			)}
+		</header>
+
+		<div class="prose">
+			<slot />
+		</div>
+	</article>
+</BaseLayout>

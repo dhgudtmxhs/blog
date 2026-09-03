@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import PostCard from '../../components/PostCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { sitePath, tagSlug } from '../../lib/paths';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('posts', ({ data }) => !data.draft);
+	const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+
+	return tags.map((tag) => ({
+		params: { tag: tagSlug(tag) },
+		props: {
+			tag,
+			posts: posts
+				.filter((post) => post.data.tags.includes(tag))
+				.sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()),
+		},
+	}));
+}
+
+interface Props {
+	tag: string;
+	posts: CollectionEntry<'posts'>[];
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`#${tag}`} description={`${tag} 태그가 달린 글 목록입니다.`}>
+	<section class="tag-page">
+		<a class="back-link" href={sitePath()}><span aria-hidden="true">←</span> 모든 글</a>
+		<p class="eyebrow">Tag</p>
+		<h1>#{tag}</h1>
+		<p>{posts.length}개의 글이 있습니다.</p>
+
+		<div class="post-list__items">
+			{posts.map((post) => <PostCard post={post} />)}
+		</div>
+	</section>
+</BaseLayout>

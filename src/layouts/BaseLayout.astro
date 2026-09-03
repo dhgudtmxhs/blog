@@ -1,0 +1,67 @@
+---
+import ThemeToggle from '../components/ThemeToggle.astro';
+import { PORTFOLIO_URL, SITE_AUTHOR, SITE_DESCRIPTION, SITE_TITLE } from '../config';
+import { sitePath } from '../lib/paths';
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
+const documentTitle = title === SITE_TITLE ? title : `${title} | ${SITE_TITLE}`;
+---
+
+<!doctype html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<meta name="author" content={SITE_AUTHOR} />
+		<meta name="color-scheme" content="light dark" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={documentTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:locale" content="ko_KR" />
+		<link rel="icon" type="image/svg+xml" href={sitePath('favicon.svg')} />
+		<title>{documentTitle}</title>
+		<script is:inline>
+			(() => {
+				const savedTheme = localStorage.getItem('ohstone-theme');
+				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				document.documentElement.classList.toggle(
+					'dark',
+					savedTheme === 'dark' || (!savedTheme && prefersDark),
+				);
+			})();
+		</script>
+	</head>
+	<body>
+		<header class="site-header">
+			<div class="shell site-header__inner">
+				<a class="brand" href={sitePath()} aria-label={`${SITE_TITLE} 홈`}>
+					<span class="brand__mark" aria-hidden="true">O</span>
+					<span>ohstone<span class="brand__accent">.blog</span></span>
+				</a>
+
+				<nav class="site-nav" aria-label="주요 메뉴">
+					<a href={sitePath()}>글</a>
+					<a href={PORTFOLIO_URL} target="_blank" rel="noreferrer">포트폴리오 <span aria-hidden="true">↗</span></a>
+					<ThemeToggle />
+				</nav>
+			</div>
+		</header>
+
+		<main class="shell page-main">
+			<slot />
+		</main>
+
+		<footer class="shell site-footer">
+			<p>© {new Date().getFullYear()} {SITE_AUTHOR}</p>
+			<p>Built with Astro.</p>
+		</footer>
+	</body>
+</html>

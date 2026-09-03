@@ -1,0 +1,32 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { postPath, tagPath } from '../lib/paths';
+
+interface Props {
+	post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+	timeZone: 'UTC',
+}).format(post.data.publishedAt);
+---
+
+<article class="post-card">
+	<div class="post-card__body">
+		<time datetime={post.data.publishedAt.toISOString()}>{formattedDate}</time>
+		<h3><a href={postPath(post.id)}>{post.data.title}</a></h3>
+		<p>{post.data.description}</p>
+	</div>
+
+	{post.data.tags.length > 0 && (
+		<ul class="tag-list" aria-label={`${post.data.title} 태그`}>
+			{post.data.tags.map((tag) => (
+				<li><a class="tag" href={tagPath(tag)}>#{tag}</a></li>
+			))}
+		</ul>
+	)}
+</article>

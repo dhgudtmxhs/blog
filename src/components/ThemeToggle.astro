@@ -13,9 +13,25 @@
 <script>
 	const storageKey = 'ohstone-theme';
 	const buttons = document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]');
+	const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+	function getStoredTheme() {
+		try {
+			const savedTheme = localStorage.getItem(storageKey);
+			return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : null;
+		} catch {
+			return null;
+		}
+	}
+
+	function applyTheme(theme: 'light' | 'dark') {
+		document.documentElement.dataset.theme = theme;
+		document.documentElement.style.colorScheme = theme;
+		syncButtons();
+	}
 
 	function syncButtons() {
-		const dark = document.documentElement.classList.contains('dark');
+		const dark = document.documentElement.dataset.theme === 'dark';
 		const label = dark ? '라이트 모드로 전환' : '다크 모드로 전환';
 
 		buttons.forEach((button) => {
@@ -28,10 +44,18 @@
 
 	buttons.forEach((button) => {
 		button.addEventListener('click', () => {
-			const dark = document.documentElement.classList.toggle('dark');
-			localStorage.setItem(storageKey, dark ? 'dark' : 'light');
-			syncButtons();
+			const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+
+			try {
+				localStorage.setItem(storageKey, nextTheme);
+			} catch {}
+
+			applyTheme(nextTheme);
 		});
+	});
+
+	systemTheme.addEventListener('change', (event) => {
+		if (!getStoredTheme()) applyTheme(event.matches ? 'dark' : 'light');
 	});
 
 	syncButtons();

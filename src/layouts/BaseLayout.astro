@@ -30,12 +30,20 @@ const documentTitle = title === SITE_TITLE ? title : `${title} | ${SITE_TITLE}`;
 		<title>{documentTitle}</title>
 		<script is:inline>
 			(() => {
-				const savedTheme = localStorage.getItem('ohstone-theme');
-				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-				document.documentElement.classList.toggle(
-					'dark',
-					savedTheme === 'dark' || (!savedTheme && prefersDark),
-				);
+				const storageKey = 'ohstone-theme';
+				let savedTheme = null;
+
+				try {
+					savedTheme = localStorage.getItem(storageKey);
+				} catch {}
+
+				const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+					? 'dark'
+					: 'light';
+				const theme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : systemTheme;
+
+				document.documentElement.dataset.theme = theme;
+				document.documentElement.style.colorScheme = theme;
 			})();
 		</script>
 	</head>
@@ -43,8 +51,8 @@ const documentTitle = title === SITE_TITLE ? title : `${title} | ${SITE_TITLE}`;
 		<header class="site-header">
 			<div class="shell site-header__inner">
 				<a class="brand" href={sitePath()} aria-label={`${SITE_TITLE} 홈`}>
-					<span class="brand__mark" aria-hidden="true">O</span>
-					<span>ohstone<span class="brand__accent">.blog</span></span>
+					<span class="brand__title">ohstone</span>
+					<span class="brand__section">blog</span>
 				</a>
 
 				<nav class="site-nav" aria-label="주요 메뉴">

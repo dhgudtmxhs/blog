@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="ohstone blog">
+  <style>
+    .background { fill: #17181a; }
+    .letter { stroke: #ffffff; }
+
+    @media (prefers-color-scheme: dark) {
+      .background { fill: #f4f5f6; }
+      .letter { stroke: #17181a; }
+    }
+  </style>
+  <rect class="background" width="128" height="128" rx="28"/>
+  <circle class="letter" cx="64" cy="64" r="27" fill="none" stroke-width="14"/>
+</svg>

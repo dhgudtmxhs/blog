@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.2.10"><meta name="description" content="실행 계획을 읽고 복합 인덱스의 순서를 결정한 과정을 기록했습니다."><meta name="author" content="오형석"><meta name="color-scheme" content="light dark"><meta property="og:type" content="website"><meta property="og:title" content="느린 목록 조회에서 인덱스를 확인한 과정 | ohstone blog"><meta property="og:description" content="실행 계획을 읽고 복합 인덱스의 순서를 결정한 과정을 기록했습니다."><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>느린 목록 조회에서 인덱스를 확인한 과정 | ohstone blog</title><script>
+			(() => {
+				const storageKey = 'ohstone-theme';
+				let savedTheme = null;
+
+				try {
+					savedTheme = localStorage.getItem(storageKey);
+				} catch {}
+
+				const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+					? 'dark'
+					: 'light';
+				const theme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : systemTheme;
+
+				document.documentElement.dataset.theme = theme;
+				document.documentElement.style.colorScheme = theme;
+			})();
+		</script><link rel="stylesheet" href="/_astro/BaseLayout.bJIdAVKG.css"></head><body><header class="site-header"><div class="shell site-header__inner"><a class="brand" href="/" aria-label="ohstone blog 홈"><img class="brand__image" src="/rocks.png" alt="" width="512" height="512"></a><button type="button" class="theme-toggle" data-theme-toggle aria-label="다크 모드로 전환" aria-pressed="false"><span class="theme-toggle__sun" aria-hidden="true">☀</span><span class="theme-toggle__moon" aria-hidden="true">☾</span><span class="sr-only" data-theme-label>다크 모드로 전환</span></button><script type="module">var e=`ohstone-theme`,t=document.querySelectorAll(`[data-theme-toggle]`),n=window.matchMedia(`(prefers-color-scheme: dark)`);function r(){try{let t=localStorage.getItem(e);return t===`dark`||t===`light`?t:null}catch{return null}}function i(e){document.documentElement.dataset.theme=e,document.documentElement.style.colorScheme=e,a()}function a(){let e=document.documentElement.dataset.theme===`dark`,n=e?`라이트 모드로 전환`:`다크 모드로 전환`;t.forEach(t=>{t.setAttribute(`aria-label`,n),t.setAttribute(`aria-pressed`,String(e));let r=t.querySelector(`[data-theme-label]`);r&&(r.textContent=n)})}t.forEach(t=>{t.addEventListener(`click`,()=>{let t=document.documentElement.dataset.theme===`dark`?`light`:`dark`;try{localStorage.setItem(e,t)}catch{}i(t)})}),n.addEventListener(`change`,e=>{r()||i(e.matches?`dark`:`light`)}),a();</script></div></header><main class="shell page-main"><article class="post"><a class="back-link" href="/"><span aria-hidden="true">←</span> 모든 글</a><header class="post__header"><time datetime="2026-08-25T00:00:00.000Z">2026년 8월 25일</time><h1>느린 목록 조회에서 인덱스를 확인한 과정</h1><p>실행 계획을 읽고 복합 인덱스의 순서를 결정한 과정을 기록했습니다.</p><ul class="tag-list" aria-label="게시글 태그"><li><a class="tag" href="/tags/database/">#Database</a></li><li><a class="tag" href="/tags/performance/">#Performance</a></li></ul></header><div class="prose"><p>데이터가 적을 때는 문제가 없던 목록 API가 운영 데이터와 비슷한 크기에서 급격히 느려졌습니다. 감으로 인덱스를 추가하기 전에 실제 쿼리와 실행 계획부터 확인했습니다.</p>
+<h2 id="문제가-된-쿼리">문제가 된 쿼리</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#F97583">select</span><span style="color:#E1E4E8"> id, </span><span style="color:#F97583">status</span><span style="color:#E1E4E8">, created_at</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> orders</span></span>
+<span class="line"><span style="color:#F97583">where</span><span style="color:#E1E4E8"> member_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> :memberId</span></span>
+<span class="line"><span style="color:#F97583">  and</span><span style="color:#F97583"> status</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> :</span><span style="color:#F97583">status</span></span>
+<span class="line"><span style="color:#F97583">order by</span><span style="color:#E1E4E8"> created_at </span><span style="color:#F97583">desc</span></span>
+<span class="line"><span style="color:#F97583">limit</span><span style="color:#79B8FF"> 20</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<p>조회 조건과 정렬 조건을 기준으로 <code>(member_id, status, created_at)</code> 복합 인덱스를 검토했습니다.</p>
+<table>
+<thead>
+<tr>
+<th>확인 항목</th>
+<th style="text-align: right">변경 전</th>
+<th style="text-align: right">변경 후</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>조회 행 수</td>
+<td style="text-align: right">184,000</td>
+<td style="text-align: right">20</td>
+</tr>
+<tr>
+<td>평균 응답 시간</td>
+<td style="text-align: right">820ms</td>
+<td style="text-align: right">34ms</td>
+</tr>
+<tr>
+<td>추가 정렬</td>
+<td style="text-align: right">발생</td>
+<td style="text-align: right">없음</td>
+</tr>
+</tbody>
+</table>
+<p>인덱스가 항상 정답은 아닙니다. 쓰기 비용과 저장 공간이 늘어나기 때문에 실제 호출 빈도와 데이터 분포를 함께 확인해야 합니다.</p>
+</div></article></main><footer class="site-footer"><div class="shell site-footer__inner"><p>© 2026 ohstone</p><p>Built with Astro</p></div></footer></body></html>

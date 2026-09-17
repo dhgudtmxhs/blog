@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.2.10"><meta name="description" content="유니크 제약, 비관적 잠금, 분산 잠금의 장단점을 비교한 기록입니다."><meta name="author" content="오형석"><meta name="color-scheme" content="light dark"><meta property="og:type" content="website"><meta property="og:title" content="동시 요청에서 중복 주문을 막기 위해 검토한 세 가지 방법 | ohstone blog"><meta property="og:description" content="유니크 제약, 비관적 잠금, 분산 잠금의 장단점을 비교한 기록입니다."><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>동시 요청에서 중복 주문을 막기 위해 검토한 세 가지 방법 | ohstone blog</title><script>
+			(() => {
+				const storageKey = 'ohstone-theme';
+				let savedTheme = null;
+
+				try {
+					savedTheme = localStorage.getItem(storageKey);
+				} catch {}
+
+				const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+					? 'dark'
+					: 'light';
+				const theme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : systemTheme;
+
+				document.documentElement.dataset.theme = theme;
+				document.documentElement.style.colorScheme = theme;
+			})();
+		</script><link rel="stylesheet" href="/_astro/BaseLayout.bJIdAVKG.css"></head><body><header class="site-header"><div class="shell site-header__inner"><a class="brand" href="/" aria-label="ohstone blog 홈"><img class="brand__image" src="/rocks.png" alt="" width="512" height="512"></a><button type="button" class="theme-toggle" data-theme-toggle aria-label="다크 모드로 전환" aria-pressed="false"><span class="theme-toggle__sun" aria-hidden="true">☀</span><span class="theme-toggle__moon" aria-hidden="true">☾</span><span class="sr-only" data-theme-label>다크 모드로 전환</span></button><script type="module">var e=`ohstone-theme`,t=document.querySelectorAll(`[data-theme-toggle]`),n=window.matchMedia(`(prefers-color-scheme: dark)`);function r(){try{let t=localStorage.getItem(e);return t===`dark`||t===`light`?t:null}catch{return null}}function i(e){document.documentElement.dataset.theme=e,document.documentElement.style.colorScheme=e,a()}function a(){let e=document.documentElement.dataset.theme===`dark`,n=e?`라이트 모드로 전환`:`다크 모드로 전환`;t.forEach(t=>{t.setAttribute(`aria-label`,n),t.setAttribute(`aria-pressed`,String(e));let r=t.querySelector(`[data-theme-label]`);r&&(r.textContent=n)})}t.forEach(t=>{t.addEventListener(`click`,()=>{let t=document.documentElement.dataset.theme===`dark`?`light`:`dark`;try{localStorage.setItem(e,t)}catch{}i(t)})}),n.addEventListener(`change`,e=>{r()||i(e.matches?`dark`:`light`)}),a();</script></div></header><main class="shell page-main"><article class="post"><a class="back-link" href="/"><span aria-hidden="true">←</span> 모든 글</a><header class="post__header"><time datetime="2026-08-17T00:00:00.000Z">2026년 8월 17일</time><h1>동시 요청에서 중복 주문을 막기 위해 검토한 세 가지 방법</h1><p>유니크 제약, 비관적 잠금, 분산 잠금의 장단점을 비교한 기록입니다.</p><ul class="tag-list" aria-label="게시글 태그"><li><a class="tag" href="/tags/concurrency/">#Concurrency</a></li><li><a class="tag" href="/tags/database/">#Database</a></li></ul></header><div class="prose"><p>같은 사용자가 결제 버튼을 여러 번 누르면 거의 동시에 주문 요청이 들어올 수 있습니다. 애플리케이션의 단순한 존재 여부 검사만으로는 두 요청이 모두 통과할 가능성이 있습니다.</p>
+<h2 id="후보-비교">후보 비교</h2>
+<h3 id="유니크-제약">유니크 제약</h3>
+<p>데이터베이스가 마지막 방어선이 됩니다. 규칙이 명확하고 성능 비용도 비교적 작지만, 충돌 예외를 비즈니스 오류로 변환해야 합니다.</p>
+<h3 id="비관적-잠금">비관적 잠금</h3>
+<p>처리 순서를 확실하게 만들 수 있지만 잠금 범위가 커지면 대기 시간이 길어집니다.</p>
+<h3 id="분산-잠금">분산 잠금</h3>
+<p>여러 인스턴스에서 공통으로 사용할 수 있지만 만료 시간과 장애 상황을 세심하게 다뤄야 합니다.</p>
+<p>이번 경우에는 주문 키에 유니크 제약을 두고, 중복 요청이 발생하면 기존 주문 결과를 반환하도록 했습니다. 가장 단순한 규칙을 데이터베이스에서 보장하는 방식이 현재 규모에는 적합했습니다.</p>
+</div></article></main><footer class="site-footer"><div class="shell site-footer__inner"><p>© 2026 ohstone</p><p>Built with Astro</p></div></footer></body></html>

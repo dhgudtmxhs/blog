@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.2.10"><meta name="description" content="트랜잭션의 시작과 종료 위치가 비즈니스 흐름에 미치는 영향을 정리했습니다."><meta name="author" content="오형석"><meta name="color-scheme" content="light dark"><meta property="og:type" content="website"><meta property="og:title" content="트랜잭션 경계를 서비스 계층에 둔 이유 | ohstone blog"><meta property="og:description" content="트랜잭션의 시작과 종료 위치가 비즈니스 흐름에 미치는 영향을 정리했습니다."><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>트랜잭션 경계를 서비스 계층에 둔 이유 | ohstone blog</title><script>
+			(() => {
+				const storageKey = 'ohstone-theme';
+				let savedTheme = null;
+
+				try {
+					savedTheme = localStorage.getItem(storageKey);
+				} catch {}
+
+				const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+					? 'dark'
+					: 'light';
+				const theme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : systemTheme;
+
+				document.documentElement.dataset.theme = theme;
+				document.documentElement.style.colorScheme = theme;
+			})();
+		</script><link rel="stylesheet" href="/_astro/BaseLayout.bJIdAVKG.css"></head><body><header class="site-header"><div class="shell site-header__inner"><a class="brand" href="/" aria-label="ohstone blog 홈"><img class="brand__image" src="/rocks.png" alt="" width="512" height="512"></a><button type="button" class="theme-toggle" data-theme-toggle aria-label="다크 모드로 전환" aria-pressed="false"><span class="theme-toggle__sun" aria-hidden="true">☀</span><span class="theme-toggle__moon" aria-hidden="true">☾</span><span class="sr-only" data-theme-label>다크 모드로 전환</span></button><script type="module">var e=`ohstone-theme`,t=document.querySelectorAll(`[data-theme-toggle]`),n=window.matchMedia(`(prefers-color-scheme: dark)`);function r(){try{let t=localStorage.getItem(e);return t===`dark`||t===`light`?t:null}catch{return null}}function i(e){document.documentElement.dataset.theme=e,document.documentElement.style.colorScheme=e,a()}function a(){let e=document.documentElement.dataset.theme===`dark`,n=e?`라이트 모드로 전환`:`다크 모드로 전환`;t.forEach(t=>{t.setAttribute(`aria-label`,n),t.setAttribute(`aria-pressed`,String(e));let r=t.querySelector(`[data-theme-label]`);r&&(r.textContent=n)})}t.forEach(t=>{t.addEventListener(`click`,()=>{let t=document.documentElement.dataset.theme===`dark`?`light`:`dark`;try{localStorage.setItem(e,t)}catch{}i(t)})}),n.addEventListener(`change`,e=>{r()||i(e.matches?`dark`:`light`)}),a();</script></div></header><main class="shell page-main"><article class="post"><a class="back-link" href="/"><span aria-hidden="true">←</span> 모든 글</a><header class="post__header"><time datetime="2026-08-29T00:00:00.000Z">2026년 8월 29일</time><h1>트랜잭션 경계를 서비스 계층에 둔 이유</h1><p>트랜잭션의 시작과 종료 위치가 비즈니스 흐름에 미치는 영향을 정리했습니다.</p><ul class="tag-list" aria-label="게시글 태그"><li><a class="tag" href="/tags/spring/">#Spring</a></li><li><a class="tag" href="/tags/database/">#Database</a></li></ul></header><div class="prose"><p>처음에는 데이터가 변경되는 Repository 메서드마다 트랜잭션을 선언했습니다. 구현은 간단했지만 하나의 유스케이스가 여러 저장소를 호출할 때 원자성을 보장하기 어려웠습니다.</p>
+<h2 id="유스케이스-단위로-묶기">유스케이스 단위로 묶기</h2>
+<p>주문 생성은 재고 차감, 주문 저장, 결제 정보 생성을 하나의 흐름으로 처리합니다. 이 중 하나라도 실패하면 전체 작업이 취소되어야 합니다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#E1E4E8">@</span><span style="color:#F97583">Transactional</span></span>
+<span class="line"><span style="color:#F97583">public</span><span style="color:#E1E4E8"> Order </span><span style="color:#B392F0">createOrder</span><span style="color:#E1E4E8">(CreateOrderCommand command) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    Product product </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> productRepository.</span><span style="color:#B392F0">getById</span><span style="color:#E1E4E8">(command.</span><span style="color:#B392F0">productId</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"><span style="color:#E1E4E8">    product.</span><span style="color:#B392F0">decreaseStock</span><span style="color:#E1E4E8">(command.</span><span style="color:#B392F0">quantity</span><span style="color:#E1E4E8">());</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> orderRepository.</span><span style="color:#B392F0">save</span><span style="color:#E1E4E8">(Order.</span><span style="color:#B392F0">create</span><span style="color:#E1E4E8">(product, command.</span><span style="color:#B392F0">quantity</span><span style="color:#E1E4E8">()));</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>서비스 메서드를 경계로 사용하니 코드가 실제 비즈니스 작업 단위와 일치했습니다. 테스트에서도 어느 범위까지 롤백되는지 설명하기 쉬워졌습니다.</p>
+<h2 id="주의할-부분">주의할 부분</h2>
+<p>트랜잭션 안에서 외부 API를 오래 기다리면 데이터베이스 연결을 불필요하게 점유할 수 있습니다. 외부 호출은 가능한 한 경계 밖으로 옮기고, 실패 보상 방식이 필요한지 별도로 판단해야 합니다.</p>
+</div></article></main><footer class="site-footer"><div class="shell site-footer__inner"><p>© 2026 ohstone</p><p>Built with Astro</p></div></footer></body></html>

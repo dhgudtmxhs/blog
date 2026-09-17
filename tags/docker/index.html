@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.2.10"><meta name="description" content="Docker 태그가 달린 글 목록입니다."><meta name="author" content="오형석"><meta name="color-scheme" content="light dark"><meta property="og:type" content="website"><meta property="og:title" content="#Docker | ohstone blog"><meta property="og:description" content="Docker 태그가 달린 글 목록입니다."><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>#Docker | ohstone blog</title><script>
+			(() => {
+				const storageKey = 'ohstone-theme';
+				let savedTheme = null;
+
+				try {
+					savedTheme = localStorage.getItem(storageKey);
+				} catch {}
+
+				const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+					? 'dark'
+					: 'light';
+				const theme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : systemTheme;
+
+				document.documentElement.dataset.theme = theme;
+				document.documentElement.style.colorScheme = theme;
+			})();
+		</script><link rel="stylesheet" href="/_astro/BaseLayout.bJIdAVKG.css"></head><body><header class="site-header"><div class="shell site-header__inner"><a class="brand" href="/" aria-label="ohstone blog 홈"><img class="brand__image" src="/rocks.png" alt="" width="512" height="512"></a><button type="button" class="theme-toggle" data-theme-toggle aria-label="다크 모드로 전환" aria-pressed="false"><span class="theme-toggle__sun" aria-hidden="true">☀</span><span class="theme-toggle__moon" aria-hidden="true">☾</span><span class="sr-only" data-theme-label>다크 모드로 전환</span></button><script type="module">var e=`ohstone-theme`,t=document.querySelectorAll(`[data-theme-toggle]`),n=window.matchMedia(`(prefers-color-scheme: dark)`);function r(){try{let t=localStorage.getItem(e);return t===`dark`||t===`light`?t:null}catch{return null}}function i(e){document.documentElement.dataset.theme=e,document.documentElement.style.colorScheme=e,a()}function a(){let e=document.documentElement.dataset.theme===`dark`,n=e?`라이트 모드로 전환`:`다크 모드로 전환`;t.forEach(t=>{t.setAttribute(`aria-label`,n),t.setAttribute(`aria-pressed`,String(e));let r=t.querySelector(`[data-theme-label]`);r&&(r.textContent=n)})}t.forEach(t=>{t.addEventListener(`click`,()=>{let t=document.documentElement.dataset.theme===`dark`?`light`:`dark`;try{localStorage.setItem(e,t)}catch{}i(t)})}),n.addEventListener(`change`,e=>{r()||i(e.matches?`dark`:`light`)}),a();</script></div></header><main class="shell page-main"><section class="tag-page"><a class="back-link" href="/"><span aria-hidden="true">←</span> 모든 글</a><p class="eyebrow">Tag</p><h1>#Docker</h1><p>1개의 글이 있습니다.</p><div class="post-list__items"><article class="post-card"><div class="post-card__body"><time datetime="2026-08-09T00:00:00.000Z">2026년 8월 9일</time><h3><a href="/posts/docker-debugging/">Docker 컨테이너가 바로 종료될 때 확인한 순서</a></h3><p>컨테이너 상태와 로그, 환경 변수를 차례대로 확인한 기록입니다.</p></div><ul class="tag-list" aria-label="Docker 컨테이너가 바로 종료될 때 확인한 순서 태그"><li><a class="tag" href="/tags/docker/">#Docker</a></li><li><a class="tag" href="/tags/operations/">#Operations</a></li></ul></article></div></section></main><footer class="site-footer"><div class="shell site-footer__inner"><p>© 2026 ohstone</p><p>Built with Astro</p></div></footer></body></html>

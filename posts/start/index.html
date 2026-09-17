@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.2.10"><meta name="description" content="Astro와 Content Collections로 만든 기술 블로그의 첫 기록입니다."><meta name="author" content="오형석"><meta name="color-scheme" content="light dark"><meta property="og:type" content="website"><meta property="og:title" content="블로그를 시작합니다 | ohstone blog"><meta property="og:description" content="Astro와 Content Collections로 만든 기술 블로그의 첫 기록입니다."><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>블로그를 시작합니다 | ohstone blog</title><script>
+			(() => {
+				const storageKey = 'ohstone-theme';
+				let savedTheme = null;
+
+				try {
+					savedTheme = localStorage.getItem(storageKey);
+				} catch {}
+
+				const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+					? 'dark'
+					: 'light';
+				const theme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : systemTheme;
+
+				document.documentElement.dataset.theme = theme;
+				document.documentElement.style.colorScheme = theme;
+			})();
+		</script><link rel="stylesheet" href="/_astro/BaseLayout.bJIdAVKG.css"></head><body><header class="site-header"><div class="shell site-header__inner"><a class="brand" href="/" aria-label="ohstone blog 홈"><img class="brand__image" src="/rocks.png" alt="" width="512" height="512"></a><button type="button" class="theme-toggle" data-theme-toggle aria-label="다크 모드로 전환" aria-pressed="false"><span class="theme-toggle__sun" aria-hidden="true">☀</span><span class="theme-toggle__moon" aria-hidden="true">☾</span><span class="sr-only" data-theme-label>다크 모드로 전환</span></button><script type="module">var e=`ohstone-theme`,t=document.querySelectorAll(`[data-theme-toggle]`),n=window.matchMedia(`(prefers-color-scheme: dark)`);function r(){try{let t=localStorage.getItem(e);return t===`dark`||t===`light`?t:null}catch{return null}}function i(e){document.documentElement.dataset.theme=e,document.documentElement.style.colorScheme=e,a()}function a(){let e=document.documentElement.dataset.theme===`dark`,n=e?`라이트 모드로 전환`:`다크 모드로 전환`;t.forEach(t=>{t.setAttribute(`aria-label`,n),t.setAttribute(`aria-pressed`,String(e));let r=t.querySelector(`[data-theme-label]`);r&&(r.textContent=n)})}t.forEach(t=>{t.addEventListener(`click`,()=>{let t=document.documentElement.dataset.theme===`dark`?`light`:`dark`;try{localStorage.setItem(e,t)}catch{}i(t)})}),n.addEventListener(`change`,e=>{r()||i(e.matches?`dark`:`light`)}),a();</script></div></header><main class="shell page-main"><article class="post"><a class="back-link" href="/"><span aria-hidden="true">←</span> 모든 글</a><header class="post__header"><time datetime="2026-09-03T00:00:00.000Z">2026년 9월 3일</time><h1>블로그를 시작합니다</h1><p>Astro와 Content Collections로 만든 기술 블로그의 첫 기록입니다.</p><ul class="tag-list" aria-label="게시글 태그"><li><a class="tag" href="/tags/astro/">#Astro</a></li><li><a class="tag" href="/tags/typescript/">#TypeScript</a></li></ul></header><div class="prose"><p>이 블로그에는 개발하면서 배운 내용과 문제를 해결한 과정을 기록합니다.</p>
+<aside class="callout"><strong>작성 원칙</strong><div><p>나중에 다시 읽어도 이해할 수 있도록 문제와 판단 근거를 함께 남깁니다.</p></div></aside>
+<h2 id="글-작성-방법">글 작성 방법</h2>
+<p><code>src/content/posts</code> 아래에 <code>.md</code> 또는 <code>.mdx</code> 파일을 추가하면 됩니다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="md"><code><span class="line"><span style="color:#79B8FF;font-weight:bold">---</span></span>
+<span class="line"><span style="color:#E1E4E8">title: &#39;글 제목&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">description: &#39;글을 한 문장으로 설명합니다.&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">publishedAt: 2026-09-03</span></span>
+<span class="line"><span style="color:#E1E4E8">tags:</span></span>
+<span class="line"><span style="color:#FFAB70">  -</span><span style="color:#E1E4E8"> Java</span></span>
+<span class="line"><span style="color:#E1E4E8">draft: false</span></span>
+<span class="line"><span style="color:#79B8FF;font-weight:bold">---</span></span></code></pre>
+<p><code>draft: true</code>로 설정한 글은 목록과 배포 결과에 포함되지 않습니다.</p></div></article></main><footer class="site-footer"><div class="shell site-footer__inner"><p>© 2026 ohstone</p><p>Built with Astro</p></div></footer></body></html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.2.10"><meta name="description" content="기능 변경 없이 코드를 정리할 때 지키려고 했던 범위와 검증 방법입니다."><meta name="author" content="오형석"><meta name="color-scheme" content="light dark"><meta property="og:type" content="website"><meta property="og:title" content="작은 리팩터링을 마치고 남긴 회고 | ohstone blog"><meta property="og:description" content="기능 변경 없이 코드를 정리할 때 지키려고 했던 범위와 검증 방법입니다."><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>작은 리팩터링을 마치고 남긴 회고 | ohstone blog</title><script>
+			(() => {
+				const storageKey = 'ohstone-theme';
+				let savedTheme = null;
+
+				try {
+					savedTheme = localStorage.getItem(storageKey);
+				} catch {}
+
+				const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+					? 'dark'
+					: 'light';
+				const theme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : systemTheme;
+
+				document.documentElement.dataset.theme = theme;
+				document.documentElement.style.colorScheme = theme;
+			})();
+		</script><link rel="stylesheet" href="/_astro/BaseLayout.bJIdAVKG.css"></head><body><header class="site-header"><div class="shell site-header__inner"><a class="brand" href="/" aria-label="ohstone blog 홈"><img class="brand__image" src="/rocks.png" alt="" width="512" height="512"></a><button type="button" class="theme-toggle" data-theme-toggle aria-label="다크 모드로 전환" aria-pressed="false"><span class="theme-toggle__sun" aria-hidden="true">☀</span><span class="theme-toggle__moon" aria-hidden="true">☾</span><span class="sr-only" data-theme-label>다크 모드로 전환</span></button><script type="module">var e=`ohstone-theme`,t=document.querySelectorAll(`[data-theme-toggle]`),n=window.matchMedia(`(prefers-color-scheme: dark)`);function r(){try{let t=localStorage.getItem(e);return t===`dark`||t===`light`?t:null}catch{return null}}function i(e){document.documentElement.dataset.theme=e,document.documentElement.style.colorScheme=e,a()}function a(){let e=document.documentElement.dataset.theme===`dark`,n=e?`라이트 모드로 전환`:`다크 모드로 전환`;t.forEach(t=>{t.setAttribute(`aria-label`,n),t.setAttribute(`aria-pressed`,String(e));let r=t.querySelector(`[data-theme-label]`);r&&(r.textContent=n)})}t.forEach(t=>{t.addEventListener(`click`,()=>{let t=document.documentElement.dataset.theme===`dark`?`light`:`dark`;try{localStorage.setItem(e,t)}catch{}i(t)})}),n.addEventListener(`change`,e=>{r()||i(e.matches?`dark`:`light`)}),a();</script></div></header><main class="shell page-main"><article class="post"><a class="back-link" href="/"><span aria-hidden="true">←</span> 모든 글</a><header class="post__header"><time datetime="2026-07-28T00:00:00.000Z">2026년 7월 28일</time><h1>작은 리팩터링을 마치고 남긴 회고</h1><p>기능 변경 없이 코드를 정리할 때 지키려고 했던 범위와 검증 방법입니다.</p><ul class="tag-list" aria-label="게시글 태그"><li><a class="tag" href="/tags/retrospective/">#Retrospective</a></li><li><a class="tag" href="/tags/refactoring/">#Refactoring</a></li></ul></header><div class="prose"><p>오래된 서비스 메서드에는 조회, 검증, 변환 로직이 한곳에 모여 있었습니다. 한 번에 구조를 완전히 바꾸기보다 현재 테스트가 보호하는 범위 안에서 작은 단계로 나눴습니다.</p>
+<h2 id="진행-순서">진행 순서</h2>
+<ol>
+<li>기존 동작을 설명하는 테스트를 추가했습니다.</li>
+<li>이름이 모호한 변수를 먼저 정리했습니다.</li>
+<li>검증 로직을 작은 메서드로 분리했습니다.</li>
+<li>각 단계마다 테스트를 실행했습니다.</li>
+</ol>
+<p>리팩터링 과정에서 새 기능을 함께 넣지 않는 것이 가장 어려웠습니다. 발견한 개선 아이디어는 별도 작업으로 기록하고 현재 변경에는 포함하지 않았습니다.</p>
+<h2 id="결과">결과</h2>
+<p>코드 줄 수가 크게 줄지는 않았지만 메서드의 입력과 결과가 명확해졌습니다. 다음 변경에서 영향을 확인해야 할 범위도 작아졌습니다.</p>
+<p>완성된 구조보다 안전하게 계속 개선할 수 있는 상태를 만드는 것이 이번 작업의 가장 큰 성과였습니다.</p>
+</div></article></main><footer class="site-footer"><div class="shell site-footer__inner"><p>© 2026 ohstone</p><p>Built with Astro</p></div></footer></body></html>

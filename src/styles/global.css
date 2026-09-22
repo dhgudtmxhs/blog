@@ -6,7 +6,7 @@
 	--text: #292a2d;
 	--heading: #151619;
 	--muted: #6f737a;
-	--faint: #92969d;
+	--faint: #666b73;
 	--line: #e7e8ea;
 	--accent: #2563d9;
 	--accent-hover: #1749a6;
@@ -24,7 +24,7 @@ html[data-theme='dark'] {
 	--text: #dfe1e4;
 	--heading: #f5f6f7;
 	--muted: #a1a5ab;
-	--faint: #797e85;
+	--faint: #9ca1a8;
 	--line: #2d3034;
 	--accent: #82aaff;
 	--accent-hover: #b2c9ff;
@@ -99,6 +99,24 @@ a {
 	border: 0;
 }
 
+.skip-link {
+	position: absolute;
+	top: 0.75rem;
+	left: 50%;
+	z-index: 1;
+	min-height: 2.75rem;
+	padding: 0.65rem 0.9rem;
+	transform: translate(-50%, -150%);
+	border-radius: 0.45rem;
+	color: var(--bg);
+	background: var(--accent);
+	font-weight: 700;
+}
+
+.skip-link:focus {
+	transform: translate(-50%, 0);
+}
+
 .site-header {
 	border-bottom: 1px solid var(--line);
 	background: var(--bg);
@@ -128,8 +146,8 @@ a {
 
 .theme-toggle {
 	display: inline-flex;
-	width: 2.35rem;
-	min-height: 2.35rem;
+	width: 2.75rem;
+	min-height: 2.75rem;
 	align-items: center;
 	justify-content: center;
 	padding: 0;
@@ -169,7 +187,7 @@ html[data-theme='dark'] .theme-toggle__moon {
 
 .intro {
 	max-width: 720px;
-	margin-bottom: clamp(2.75rem, 6vw, 4rem);
+	margin-bottom: clamp(1rem, 3vw, 1.75rem);
 }
 
 .eyebrow {
@@ -203,23 +221,6 @@ html[data-theme='dark'] .theme-toggle__moon {
 	font-size: clamp(1rem, 2vw, 1.08rem);
 }
 
-.tag-nav {
-	display: flex;
-	align-items: flex-start;
-	gap: 1rem;
-	padding-bottom: 1.5rem;
-	border-bottom: 1px solid var(--line);
-}
-
-.tag-nav > span {
-	padding-top: 0.24rem;
-	color: var(--faint);
-	font-size: 0.74rem;
-	font-weight: 700;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-}
-
 .tag-list {
 	display: flex;
 	flex-wrap: wrap;
@@ -231,7 +232,7 @@ html[data-theme='dark'] .theme-toggle__moon {
 
 .tag {
 	display: inline-flex;
-	min-height: 1.75rem;
+	min-height: 2.75rem;
 	align-items: center;
 	padding: 0.24rem 0.6rem;
 	border-radius: 999px;
@@ -252,7 +253,7 @@ html[data-theme='dark'] .theme-toggle__moon {
 	align-items: baseline;
 	justify-content: space-between;
 	gap: 1rem;
-	padding-block: 2rem 0.35rem;
+	padding-block: clamp(2.5rem, 5vw, 3.5rem) 0.35rem;
 }
 
 .section-heading h2 {
@@ -323,7 +324,7 @@ html[data-theme='dark'] .theme-toggle__moon {
 
 .pagination__link {
 	display: inline-flex;
-	min-height: 2.35rem;
+	min-height: 2.75rem;
 	align-items: center;
 	gap: 0.4rem;
 	color: var(--muted);

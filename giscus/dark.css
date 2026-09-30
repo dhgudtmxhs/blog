@@ -1,17 +1,27 @@
 @import url('https://giscus.app/themes/dark.css');
-@import url('./shared.css');
 
 main {
 	color-scheme: dark;
-	--color-fg-default: #dfe1e4;
-	--color-fg-muted: #a1a5ab;
-	--color-fg-subtle: #9ca1a8;
-	--color-canvas-default: #141516;
-	--color-canvas-overlay: #1b2331;
-	--color-canvas-inset: #1b2028;
-	--color-canvas-subtle: #1b2028;
-	--color-border-default: #2a3850;
-	--color-border-muted: #2a3850;
-	--color-accent-fg: #82aaff;
-	--color-accent-emphasis: #82aaff;
+	--color-fg-default: #f0f0f0;
+	--color-fg-muted: #b8b8b8;
+	--color-fg-subtle: #b8b8b8;
+	--gsc-control-border: #565656;
+	--gsc-input-bg: #1c1c1c;
+	--color-canvas-default: #141414;
+	--color-canvas-overlay: #1f1f1f;
+	--color-canvas-inset: #1f1f1f;
+	--color-canvas-subtle: #1f1f1f;
+	--color-border-default: #a3a3a3;
+	--color-border-muted: #a3a3a3;
+	--color-accent-fg: #a3a3a3;
+	--color-accent-emphasis: #a3a3a3;
+	--color-accent-muted: rgb(163 163 163 / 35%);
+	--color-accent-subtle: #262626;
+	--color-scale-blue-8: #404040;
 }
+
+#__next main .gsc-comment-box-buttons button[type='submit'] {
+	--color-btn-primary-bg: #b8b8b8;
+	--color-btn-primary-border: #b8b8b8;
+}
+

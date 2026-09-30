@@ -1,0 +1,27 @@
+@import url('https://giscus.app/themes/dark.css');
+
+main {
+	color-scheme: dark;
+	--color-fg-default: #f0f0f0;
+	--color-fg-muted: #b8b8b8;
+	--color-fg-subtle: #b8b8b8;
+	--gsc-control-border: #565656;
+	--gsc-input-bg: #1c1c1c;
+	--color-canvas-default: #141414;
+	--color-canvas-overlay: #1f1f1f;
+	--color-canvas-inset: #1f1f1f;
+	--color-canvas-subtle: #1f1f1f;
+	--color-border-default: #a3a3a3;
+	--color-border-muted: #a3a3a3;
+	--color-accent-fg: #a3a3a3;
+	--color-accent-emphasis: #a3a3a3;
+	--color-accent-muted: rgb(163 163 163 / 35%);
+	--color-accent-subtle: #262626;
+	--color-scale-blue-8: #404040;
+}
+
+#__next main .gsc-comment-box-buttons button[type='submit'] {
+	--color-btn-primary-bg: #b8b8b8;
+	--color-btn-primary-border: #b8b8b8;
+}
+

@@ -1,0 +1,20 @@
+@import url('https://giscus.app/themes/light.css');
+
+main {
+	color-scheme: light;
+	--color-fg-default: #292929;
+	--color-fg-muted: #636363;
+	--color-fg-subtle: #666666;
+	--color-canvas-default: #ffffff;
+	--color-canvas-overlay: #ffffff;
+	--color-canvas-inset: #f5f5f5;
+	--color-canvas-subtle: #f5f5f5;
+	--color-border-default: #525252;
+	--color-border-muted: #525252;
+	--color-accent-fg: #525252;
+	--color-accent-emphasis: #525252;
+	--color-accent-muted: rgb(82 82 82 / 35%);
+	--color-accent-subtle: #f5f5f5;
+	--color-scale-blue-1: #e5e5e5;
+}
+

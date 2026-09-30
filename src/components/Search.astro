@@ -1,0 +1,186 @@
+---
+import { sitePath } from '../lib/paths';
+
+// The dev server reads the last built index; production serves the same files from /pagefind/.
+const bundlePath = import.meta.env.DEV
+	? `/@fs/${decodeURIComponent(new URL('../../dist/pagefind/', import.meta.url).pathname).replace(/^\/([A-Za-z]:\/)/, '$1')}`
+	: sitePath('pagefind/');
+---
+
+<div class="site-search">
+	<link rel="stylesheet" href={`${bundlePath}pagefind-component-ui.css`} />
+	<script is:inline type="module" src={`${bundlePath}pagefind-component-ui.js`}></script>
+	<pagefind-config bundle-path={bundlePath} base-url={sitePath()} lang="ko"></pagefind-config>
+	<pagefind-modal-trigger compact hide-shortcut placeholder="글 검색" title="글 검색 (Ctrl+K / ⌘K)"></pagefind-modal-trigger>
+	<pagefind-modal reset-on-close>
+		<pagefind-modal-header>
+			<pagefind-input placeholder="제목이나 본문으로 검색"></pagefind-input>
+		</pagefind-modal-header>
+		<pagefind-modal-body>
+			<pagefind-summary></pagefind-summary>
+			<pagefind-results hide-sub-results></pagefind-results>
+		</pagefind-modal-body>
+	</pagefind-modal>
+</div>
+
+<script>
+	const results = document.querySelector('.site-search pagefind-results');
+	if (results) {
+		new MutationObserver(() => {
+			results.querySelectorAll('.pf-result-excerpt').forEach((excerpt) => {
+				const text = excerpt.textContent?.trim();
+				if (text && !/[.!?。！？…]["'”’\])]*$/u.test(text)) {
+					excerpt.append('…');
+				}
+			});
+		}).observe(results, { childList: true, subtree: true });
+	}
+</script>
+
+<style>
+	.site-search {
+		display: flex;
+		align-items: center;
+		--pf-text: var(--text);
+		--pf-text-secondary: var(--muted);
+		--pf-text-muted: var(--muted);
+		--pf-background: var(--bg);
+		--pf-border: var(--line);
+		--pf-border-focus: var(--accent);
+		--pf-hover: var(--surface);
+		--pf-mark: var(--accent);
+		--pf-outline-focus: var(--accent);
+		--pf-skeleton: var(--surface);
+		--pf-skeleton-shine: var(--surface-hover);
+		--pf-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+		--pf-input-height: 3rem;
+		--pf-summary-font-size: 0.875rem;
+		--pf-result-title-font-size: 1rem;
+		--pf-result-excerpt-font-size: 0.875rem;
+		--pf-results-gap: 0;
+		--pf-modal-max-width: 640px;
+		--pf-shadow-sm: none;
+		--pf-shadow-lg: none;
+	}
+
+	.site-search :global(pagefind-modal-trigger button) {
+		/* Override Pagefind's high-specificity defaults to match the header controls. */
+		width: 2.75rem !important;
+		height: 2.75rem !important;
+		min-height: 2.75rem;
+		justify-content: center !important;
+		padding: 0 !important;
+		border: 0 !important;
+		border-radius: 0.45rem !important;
+		color: var(--muted) !important;
+		background: transparent !important;
+	}
+
+	.site-search :global(pagefind-modal-trigger button:hover) {
+		color: var(--heading) !important;
+		background: var(--surface) !important;
+	}
+
+	.site-search :global(.pf-trigger-icon) {
+		width: 18px !important;
+		height: 18px !important;
+		background: currentColor !important;
+	}
+
+	.site-search :global(.pf-modal-close) {
+		display: flex !important;
+		width: 2.75rem !important;
+		height: 2.75rem !important;
+	}
+
+	.site-search :global(.pf-input) {
+		min-height: 2.75rem;
+		padding-right: 12px !important;
+		background: var(--pf-hover) !important;
+	}
+
+	.site-search :global(.pf-input:focus-visible) {
+		outline: 2px solid var(--accent) !important;
+		outline-offset: 2px !important;
+		box-shadow: none !important;
+	}
+
+	.site-search :global(.pf-input-clear) {
+		display: none !important;
+	}
+
+	.site-search :global(pagefind-modal-header) {
+		padding: 16px !important;
+	}
+
+	.site-search :global(pagefind-modal-body) {
+		padding: 12px !important;
+		scrollbar-color: var(--muted) var(--bg);
+	}
+
+	.site-search :global(.pf-summary) {
+		margin: 4px 12px 8px !important;
+	}
+
+	.site-search :global(.pf-result-card) {
+		padding: 16px 12px !important;
+		border: 0 !important;
+		border-radius: 0 !important;
+	}
+
+	.site-search :global(.pf-result) {
+		border-top: 1px solid var(--line) !important;
+	}
+
+	.site-search :global(.pf-result:last-child) {
+		border-bottom: 1px solid var(--line) !important;
+	}
+
+	.site-search :global(.pf-result-card:hover),
+	.site-search :global(.pf-result-card:has([data-pf-selected])) {
+		background: var(--surface) !important;
+	}
+
+	.site-search :global(.pf-result-card:has(.pf-result-link:focus-visible)) {
+		outline: 2px solid var(--accent) !important;
+		outline-offset: -2px !important;
+		box-shadow: none !important;
+	}
+
+	.site-search :global(.pf-result-title) {
+		font-weight: 600 !important;
+		line-height: 1.5 !important;
+		word-break: keep-all !important;
+		overflow-wrap: anywhere !important;
+	}
+
+	.site-search :global(.pf-result-link) {
+		color: var(--heading) !important;
+	}
+
+	.site-search :global(.pf-modal:has(input:placeholder-shown) pagefind-modal-body) {
+		display: none !important;
+	}
+
+	.site-search :global(.pf-modal:has(input:placeholder-shown) pagefind-modal-header) {
+		border-bottom: 0 !important;
+	}
+
+	.site-search :global(.pf-result-excerpt) {
+		margin-top: 6px !important;
+		line-height: 1.65 !important;
+		white-space: normal !important;
+		overflow-wrap: anywhere !important;
+	}
+
+	@media (max-width: 640px) {
+		.site-search :global(dialog.pf-modal[open]) {
+			bottom: auto !important;
+			width: calc(100% - 24px) !important;
+			height: auto !important;
+			max-height: 80dvh !important;
+			margin: 8dvh auto !important;
+			border-radius: 12px !important;
+		}
+	}
+</style>

@@ -1,7 +1,10 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
-import { sitePath, tagPath } from '../lib/paths';
+import { tagPath } from '../lib/paths';
+import lightTheme from '../../public/giscus/light.css?raw';
+import darkTheme from '../../public/giscus/dark.css?raw';
+import sharedTheme from '../../public/giscus/shared.css?raw';
 
 interface Props {
 	post: CollectionEntry<'posts'>;
@@ -18,11 +21,9 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
 
 <BaseLayout title={post.data.title} description={post.data.description}>
 	<article class="post">
-		<a class="back-link" href={sitePath()}><span aria-hidden="true">←</span> 모든 글</a>
-
-		<header class="post__header">
-			<time datetime={post.data.publishedAt.toISOString()}>{formattedDate}</time>
-			<h1>{post.data.title}</h1>
+		<header class="post__header" data-pagefind-body>
+			<time datetime={post.data.publishedAt.toISOString()} data-pagefind-ignore>{formattedDate}</time>
+			<h1 data-pagefind-meta="title">{post.data.title}</h1>
 			<p>{post.data.description}</p>
 
 			{post.data.tags.length > 0 && (
@@ -34,8 +35,125 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
 			)}
 		</header>
 
-		<div class="prose">
+		<div class="prose" data-pagefind-body>
 			<slot />
 		</div>
+
+		<section class="post-comments" aria-label="댓글">
+			<div
+				class="giscus"
+				data-light-theme={`data:text/css;charset=utf-8,${encodeURIComponent(lightTheme + '\n' + sharedTheme)}`}
+				data-dark-theme={`data:text/css;charset=utf-8,${encodeURIComponent(darkTheme + '\n' + sharedTheme)}`}
+			></div>
+			<script is:inline>
+				(() => {
+					const container = document.querySelector('.giscus');
+					const root = document.documentElement;
+					const script = document.createElement('script');
+					script.src = 'https://giscus.app/client.js';
+					script.crossOrigin = 'anonymous';
+					script.async = true;
+					Object.assign(script.dataset, {
+						repo: 'dhgudtmxhs/blog',
+						repoId: 'R_kgDOUM4j0Q',
+						category: 'Comments',
+						categoryId: 'DIC_kwDOUM4j0c4DGtfy',
+						mapping: 'pathname',
+						strict: '1',
+						reactionsEnabled: '1',
+						emitMetadata: '0',
+						inputPosition: 'top',
+						lang: 'ko',
+						loading: 'lazy',
+					});
+					function syncTheme() {
+						const theme = root.dataset.theme === 'dark'
+							? container.dataset.darkTheme
+							: container.dataset.lightTheme;
+						script.dataset.theme = theme;
+						container.querySelector('iframe')?.contentWindow?.postMessage(
+							{ giscus: { setConfig: { theme } } },
+							'https://giscus.app',
+						);
+					}
+					syncTheme();
+					container.addEventListener('load', syncTheme, true);
+					function onGiscusReady(event) {
+						const frame = container.querySelector('iframe');
+						if (event.origin !== 'https://giscus.app' || event.source !== frame?.contentWindow) return;
+						if (typeof event.data?.giscus?.resizeHeight !== 'number') return;
+						window.removeEventListener('message', onGiscusReady);
+						syncTheme();
+					}
+					window.addEventListener('message', onGiscusReady);
+					new MutationObserver(syncTheme).observe(root, {
+						attributes: true,
+						attributeFilter: ['data-theme'],
+					});
+					container.append(script);
+				})();
+			</script>
+		</section>
 	</article>
 </BaseLayout>
+
+<style>
+	.post-comments {
+		margin-top: 3rem;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--post-divider);
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre) => {
+		const code = pre.querySelector('code');
+		if (!code) return;
+
+		const wrapper = document.createElement('div');
+		wrapper.className = 'code-block';
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'code-copy';
+		button.innerHTML = `
+			<svg class="code-copy__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+				<rect x="4" y="8" width="12" height="12" rx="3" />
+				<path d="M8 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2" />
+			</svg>
+			<svg class="code-copy__check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<path d="m5 12 4 4L19 6" />
+			</svg>
+			<span class="sr-only" aria-live="polite">코드 복사</span>
+			<span class="code-copy__tooltip" aria-hidden="true">코드 복사</span>
+		`;
+		const label = button.querySelector<HTMLElement>('.sr-only')!;
+		const tooltip = button.querySelector<HTMLElement>('.code-copy__tooltip')!;
+		function setState(state: string, text: string) {
+			button.dataset.state = state;
+			label.textContent = text;
+			tooltip.textContent = text;
+		}
+		pre.before(wrapper);
+		wrapper.append(button, pre);
+
+		let resetTimer = 0;
+		button.addEventListener('click', async () => {
+			window.clearTimeout(resetTimer);
+			button.disabled = true;
+			setState('pending', '복사 중…');
+			button.removeAttribute('title');
+			try {
+				await navigator.clipboard.writeText(code.textContent ?? '');
+				setState('success', '복사됨');
+				resetTimer = window.setTimeout(() => {
+					setState('idle', '코드 복사');
+				}, 2000);
+			} catch {
+				setState('error', '복사 실패 · 다시 시도');
+				button.title = '코드를 선택해 직접 복사할 수도 있습니다.';
+			} finally {
+				button.disabled = false;
+			}
+		});
+	});
+</script>

@@ -1,0 +1,17 @@
+@import url('https://giscus.app/themes/light.css');
+@import url('./shared.css');
+
+main {
+	color-scheme: light;
+	--color-fg-default: #292a2d;
+	--color-fg-muted: #626a78;
+	--color-fg-subtle: #666b73;
+	--color-canvas-default: #ffffff;
+	--color-canvas-overlay: #ffffff;
+	--color-canvas-inset: #f4f8ff;
+	--color-canvas-subtle: #f4f8ff;
+	--color-border-default: #dbe6f7;
+	--color-border-muted: #dbe6f7;
+	--color-accent-fg: #2563d9;
+	--color-accent-emphasis: #2563d9;
+}

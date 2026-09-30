@@ -1,0 +1,43 @@
+main .gsc-main {
+	gap: 1.25rem;
+}
+
+main .gsc-reactions {
+	margin-block: 0;
+}
+
+main .gsc-header {
+	padding-bottom: 0.75rem;
+}
+
+main .gsc-comment-box {
+	border-radius: 0.5rem;
+}
+
+main .gsc-comment-box-tabs {
+	background: transparent;
+}
+
+main .gsc-comment-box-tabs button {
+	border-color: transparent;
+}
+
+main .gsc-comment-box-tabs button.color-text-primary {
+	border-bottom: 2px solid var(--color-accent-fg);
+	background: transparent;
+}
+
+main .gsc-comment-box-textarea,
+main .gsc-comment-box-textarea-extras {
+	border-color: transparent;
+	box-shadow: none;
+}
+
+main .gsc-comment-box-textarea:focus {
+	border-color: var(--color-accent-fg);
+}
+
+main .gsc-comment-box-textarea::placeholder {
+	color: var(--color-fg-muted);
+	opacity: 1;
+}

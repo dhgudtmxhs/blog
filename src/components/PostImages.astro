@@ -1,0 +1,149 @@
+<dialog class="image-viewer" aria-label="이미지 크게 보기" data-pagefind-ignore>
+	<form method="dialog">
+		<button class="image-viewer__close" aria-label="이미지 닫기" autofocus>
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+		</button>
+	</form>
+	<figure class="image-viewer__content"></figure>
+</dialog>
+
+<script>
+	const viewer = document.querySelector<HTMLDialogElement>('.image-viewer')!;
+	const content = viewer.querySelector('figure')!;
+	let trigger: HTMLButtonElement | undefined;
+
+	// 같은 문단에 이미지들만 연달아 쓰면 두 열로 표시한다.
+	document.querySelectorAll('.prose p').forEach((paragraph) => {
+		const media = [...paragraph.children];
+		const onlyImages = [...paragraph.childNodes].every((node) =>
+			node instanceof Element ? ['IMG', 'PICTURE'].includes(node.tagName) : !node.textContent?.trim(),
+		);
+		if (onlyImages && media.length > 1) paragraph.classList.add('image-row');
+	});
+
+	document.querySelectorAll<HTMLImageElement>('.prose img').forEach((image) => {
+		if (image.closest('a, button')) return;
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'post-image';
+		button.setAttribute('aria-label', `${image.alt || '이미지'} 크게 보기`);
+		button.setAttribute('aria-haspopup', 'dialog');
+		const media = image.parentElement?.tagName === 'PICTURE' ? image.parentElement : image;
+		media.before(button);
+		button.append(media);
+		const hint = document.createElement('span');
+		hint.className = 'post-image__hint';
+		hint.setAttribute('aria-hidden', 'true');
+		hint.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7" /></svg>';
+		button.append(hint);
+		button.addEventListener('click', () => {
+			const expanded = new Image();
+			expanded.src = image.currentSrc || image.src;
+			expanded.alt = image.alt;
+			const caption = document.createElement('figcaption');
+			caption.textContent = image.closest('figure')?.querySelector('figcaption')?.textContent || image.title || image.alt;
+			content.replaceChildren(expanded, caption);
+			trigger = button;
+			viewer.showModal();
+		});
+	});
+	viewer.addEventListener('click', (event) => {
+		if (event.target === viewer) viewer.close();
+	});
+	viewer.addEventListener('close', () => {
+		content.replaceChildren();
+		trigger?.focus({ preventScroll: true });
+	});
+</script>
+
+<style>
+	:global(.prose .post-image) {
+		position: relative;
+		display: inline-block;
+		max-width: 100%;
+		padding: 0;
+		border: 0;
+		border-radius: 0.4rem;
+		background: transparent;
+		vertical-align: middle;
+		cursor: zoom-in;
+	}
+	:global(.post-image img) { display: block; margin: 0; }
+	:global(.post-image__hint) {
+		position: absolute;
+		right: 0.65rem;
+		bottom: 0.65rem;
+		display: grid;
+		place-items: center;
+		width: 2rem;
+		height: 2rem;
+		border-radius: 0.4rem;
+		color: var(--text);
+		background: var(--surface);
+		opacity: 0;
+		transition: opacity 150ms ease;
+	}
+	:global(.post-image:hover .post-image__hint),
+	:global(.post-image:focus-visible .post-image__hint) { opacity: 1; }
+	:global(.prose .image-row) {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		align-items: start;
+		gap: 1rem;
+	}
+	:global(.image-row .post-image) { min-width: 0; justify-self: center; }
+	:global(html:has(.image-viewer[open])) { overflow: hidden; }
+	.image-viewer {
+		position: fixed;
+		inset: 0;
+		width: 100%;
+		max-width: none;
+		height: 100%;
+		max-height: none;
+		margin: 0;
+		padding: 4.5rem 1.5rem 2rem;
+		border: 0;
+		background: transparent;
+		color: var(--text);
+	}
+	.image-viewer[open] { display: grid; place-items: center; }
+	.image-viewer::backdrop { background: color-mix(in srgb, var(--bg) 95%, transparent); }
+	.image-viewer > form {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+	}
+	.image-viewer__close {
+		display: grid;
+		place-items: center;
+		width: 2.75rem;
+		height: 2.75rem;
+		padding: 0;
+		border: 0;
+		border-radius: 0.4rem;
+		background: var(--surface);
+		color: var(--text);
+		cursor: pointer;
+	}
+	.image-viewer__close:hover { background: var(--surface-hover); }
+	.image-viewer__content { margin: 0; max-width: 100%; animation: image-reveal 180ms ease-out; }
+	.image-viewer__content :global(img) {
+		display: block;
+		max-width: 100%;
+		max-height: calc(100dvh - 10rem);
+		margin-inline: auto;
+		object-fit: contain;
+		border-radius: 0.4rem;
+	}
+	.image-viewer__content :global(figcaption) {
+		margin-top: 1rem;
+		max-width: 65ch;
+		color: var(--muted);
+		font-size: 0.8125rem;
+		text-align: center;
+		overflow-wrap: anywhere;
+	}
+	@keyframes image-reveal { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+	@media (hover: none) { :global(.post-image__hint) { opacity: 1; } }
+	@media (max-width: 480px) { :global(.prose .image-row) { grid-template-columns: 1fr; } }
+</style>

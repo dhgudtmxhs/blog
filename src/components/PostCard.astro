@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { postPath, tagPath } from '../lib/paths';
+import { postPath, tagPath, sitePath } from '../lib/paths';
 
 interface Props {
 	post: CollectionEntry<'posts'>;
@@ -21,6 +21,9 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
 		<h3><a href={postPath(post.id)}>{post.data.title}</a></h3>
 		<p>{post.data.description}</p>
 	</div>
+	{post.data.cover && (
+		<img class="post-card__cover" src={sitePath(post.data.cover)} alt={post.data.coverAlt} loading="lazy" width="160" height="120" />
+	)}
 
 	{post.data.tags.length > 0 && (
 		<ul class="tag-list" aria-label={`${post.data.title} 태그`}>

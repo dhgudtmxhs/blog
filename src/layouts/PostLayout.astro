@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
+import PostImages from '../components/PostImages.astro';
 import { tagPath } from '../lib/paths';
 import lightTheme from '../../public/giscus/light.css?raw';
 import darkTheme from '../../public/giscus/dark.css?raw';
@@ -25,6 +26,7 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
 			<time datetime={post.data.publishedAt.toISOString()} data-pagefind-ignore>{formattedDate}</time>
 			<h1 data-pagefind-meta="title">{post.data.title}</h1>
 			<p>{post.data.description}</p>
+			{post.data.draft && <p class="draft-notice">로컬 미리보기 · 이 글은 배포되지 않습니다.</p>}
 
 			{post.data.tags.length > 0 && (
 				<ul class="tag-list" aria-label="게시글 태그">
@@ -38,8 +40,9 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
 		<div class="prose" data-pagefind-body>
 			<slot />
 		</div>
+		<PostImages />
 
-		<section class="post-comments" aria-label="댓글">
+		{!post.data.draft && <section class="post-comments" aria-label="댓글">
 			<div
 				class="giscus"
 				data-light-theme={`data:text/css;charset=utf-8,${encodeURIComponent(lightTheme + '\n' + sharedTheme)}`}
@@ -93,11 +96,16 @@ const formattedDate = new Intl.DateTimeFormat('ko-KR', {
 					container.append(script);
 				})();
 			</script>
-		</section>
+		</section>}
 	</article>
 </BaseLayout>
 
 <style>
+	.draft-notice {
+		color: var(--muted);
+		font-size: 0.8125rem;
+	}
+
 	.post-comments {
 		margin-top: 3rem;
 		padding-top: 1.25rem;
